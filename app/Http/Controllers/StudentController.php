@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Student;
 use Dompdf\Dompdf;
 use App\Imports\StudentsImport;
-use Maatwebsite\Excel\Facades\Excel;
+use Exception;
 
 
 
@@ -29,12 +29,16 @@ class StudentController extends Controller
         // Validation
         $validatedData = $request->validate([
             'register_no' => 'required|unique:students',
-            // Add validation rules for other fields
+            'student_name' => 'required|string|regex:/^[a-zA-Z\s\'\-]+$/',
+            'gender' => 'required|in:male,female,other',
+            'date_of_birth' => 'required|date',
+            'email' => 'required|email|unique:students',
+            'father_name' => 'required|string|regex:/^[a-zA-Z\s\'\-]+$/',
+            'contact_no' => 'required|string',
         ]);
-
         Student::create($validatedData);
 
-        return redirect()->route('students.index');
+        return redirect()->route('dashboard')->with('success','User created successfully');
     }
 
     // Implement other CRUD methods (edit, update, destroy)
@@ -52,13 +56,57 @@ class StudentController extends Controller
     }
 
     public function import(Request $request)
+    { 
+        
+    }
+
+
+    public function view($id)
     {
-        $request->validate([
-            'file' => 'required|mimes:xls,xlsx'
+        $student = Student::where('id',$id)->first();
+
+        return view('students.show',['student' => $student]);
+    }
+
+    public function edit($id)
+    {
+        $student = Student::where('id',$id)->first();
+
+        return view('students.update',['student'=>$student]);
+    }
+
+    public function update(Request $request)
+    {
+        $validatedData = $request->validate([
+            'register_no' => 'required',
+            'student_name' => 'required|string|regex:/^[a-zA-Z\s\'\-]+$/',
+            'gender' => 'required|in:male,female,other',
+            'date_of_birth' => 'required|date',
+            'email' => 'required|email',
+            'father_name' => 'required|string|regex:/^[a-zA-Z\s\'\-]+$/',
+            'contact_no' => 'required|string',
         ]);
 
-        Excel::import(new StudentsImport, $request->file('file'));
+        $student = Student::findOrFail($request->studentId);
 
-        return redirect()->back()->with('success', 'Students imported successfully.');
+        $student->update([
+            'register_no' => $request->register_no,
+            'student_name' => $request->student_name,
+            'gender' => $request->gender,
+            'date_of_birth' => $request->date_of_birth,
+            'email' => $request->email,
+            'father_name' => $request->father_name,
+            'contact_no' => $request->contact_no,
+        ]);
+
+        return redirect()->route('dashboard');
     }
+
+    public function destroy($id)
+   {
+    // Delete item from database
+    Student::destroy($id);
+    return redirect()->back()->with('success', 'Data deleted successfully.');
+   }
+
 }

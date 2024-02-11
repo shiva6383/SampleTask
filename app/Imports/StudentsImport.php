@@ -1,16 +1,18 @@
 <?php
 
 namespace App\Imports;
-
+  
+use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-use App\Models\Student;
-
-class StudentsImport implements ToModel
+class StudentsImport implements WithHeadingRow, ToCollection
 {
-    public function model(array $row)
-    {
-        return new Student([
+    public function collection(Collection $row)
+    {   
+        foreach ($rows as $row) {
+            Student::create([
             'register_no' => $row[0],
             'student_name' => $row[1],
             'gender' => $row[2],
@@ -19,5 +21,6 @@ class StudentsImport implements ToModel
             'father_name' => $row[5],
             'contact_no' => $row[6],
         ]);
+       }
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,7 +30,18 @@ Route::get('/dashboard', [App\Http\Controllers\StudentController::class, 'index'
 
 Route::get('/exportPdf', [App\Http\Controllers\StudentController::class, 'exportPdf'])->name('exportPdf');
 
-Route::get('/students/import', [App\Http\Controllers\StudentController::class, 'showImportForm'])->name('students.import.form');
 Route::post('/students/import', [App\Http\Controllers\StudentController::class, 'import'])->name('students.import');
 
-// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/create', [App\Http\Controllers\StudentController::class, 'create'])->name('create');
+Route::post('/store', [App\Http\Controllers\StudentController::class, 'store'])->name('store');
+Route::get('/view/{id}', [App\Http\Controllers\StudentController::class, 'view'])->name('view');
+Route::get('/edit/{id}', [App\Http\Controllers\StudentController::class, 'edit'])->name('edit');
+Route::put('/update', [App\Http\Controllers\StudentController::class, 'update'])->name('update');
+Route::any('/items/{id}/delete', [App\Http\Controllers\StudentController::class, 'destroy'])->name('delete');
+
+
+Route::post('/logout', function () {
+    Auth::logout();
+    return redirect()->route('login');
+})->name('logout');
+

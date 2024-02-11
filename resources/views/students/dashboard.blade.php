@@ -1,4 +1,7 @@
 
+@extends('layouts.app')
+ 
+@section('content')
 <style>
 /* Add your custom CSS styles here */
 .container {
@@ -22,17 +25,41 @@
     border: 1px solid #dee2e6;
     padding: 8px;
 }
+form button {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #c82333;
+}
+
+
 </style>
     <div class="container">
         <h1>Student List Dashboard</h1>
         <div class="action-buttons mb-3">
             <a href="{{ route('exportPdf') }}" class="btn btn-primary">PDF DOWNLOAD</a>
-        </div>        
+            
+        </div> 
+        <form action="{{ route('logout') }}" method="POST">
+            @csrf
+            <button type="submit">Logout</button>
+            </form>  
+
+        
+
         <form id="importForm" action="{{ route('students.import') }}" method="post" enctype="multipart/form-data">
     @csrf
     <input type="file" name="file" id="fileInput">
     <button type="submit" id="importButton">Import</button>
 </form>
+
+<div><button><a href="{{route('create')}}">Add new</a></button></div>
 
 <script>
     document.getElementById('fileInput').addEventListener('change', function() {
@@ -52,6 +79,7 @@
                         <th>Email ID</th>
                         <th>Father Name</th>
                         <th>Contact No</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -64,9 +92,61 @@
                         <td>{{ $student->email }}</td>
                         <td>{{ $student->father_name }}</td>
                         <td>{{ $student->contact_no }}</td>
+                        <td><a href="{{route('view',$student->id)}}"><i class="fas fa-eye"></i></a>
+                            <a href="{{route('edit',$student->id)}}"><i class="fas fa-edit"></i></a>
+                            <button class="btn btn-danger" onclick="confirmDelete({{ $student->id }})">Delete</button>
+                        </td>
+                        
                     </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
     </div>
+    <script>
+function confirmDelete(itemId) {
+    if (confirm('Are you sure you want to delete this item?')) {
+        window.location.href = '/items/' + itemId + '/delete';
+    }
+}
+</script>
+
+    <script>
+  @if(Session::has('message'))
+  toastr.options =
+  {
+  	"closeButton" : true,
+  	"progressBar" : true
+  }
+  		toastr.success("{{ session('message') }}");
+  @endif
+
+  @if(Session::has('error'))
+  toastr.options =
+  {
+  	"closeButton" : true,
+  	"progressBar" : true
+  }
+  		toastr.error("{{ session('error') }}");
+  @endif
+
+  @if(Session::has('info'))
+  toastr.options =
+  {
+  	"closeButton" : true,
+  	"progressBar" : true
+  }
+  		toastr.info("{{ session('info') }}");
+  @endif
+
+  @if(Session::has('warning'))
+  toastr.options =
+  {
+  	"closeButton" : true,
+  	"progressBar" : true
+  }
+  		toastr.warning("{{ session('warning') }}");
+  @endif
+</script>
+
+    @endsection
