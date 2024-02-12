@@ -44,22 +44,23 @@ form button:hover {
         <h1>Student List Dashboard</h1>
         <div class="action-buttons mb-3">
             <a href="{{ route('exportPdf') }}" class="btn btn-primary">PDF DOWNLOAD</a>
-            
-        </div> 
-        <form action="{{ route('logout') }}" method="POST">
+            <div style="padding-top: 15px;padding-bottom: 15px;"><a href="{{route('create')}}" class="btn btn-primary">Add new</a></div>
+          
+            <form action="{{ route('logout') }}" method="POST">
             @csrf
             <button type="submit">Logout</button>
             </form>  
 
+        </div> 
         
-
+        
+<!-- 
         <form id="importForm" action="{{ route('students.import') }}" method="post" enctype="multipart/form-data">
     @csrf
     <input type="file" name="file" id="fileInput">
     <button type="submit" id="importButton">Import</button>
-</form>
+</form> -->
 
-<div><button><a href="{{route('create')}}">Add new</a></button></div>
 
 <script>
     document.getElementById('fileInput').addEventListener('change', function() {
@@ -68,7 +69,7 @@ form button:hover {
 </script>
 
         <div class="student-list">
-            
+
             <table class="table">
                 <thead>
                     <tr>
